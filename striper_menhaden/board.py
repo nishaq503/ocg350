@@ -10,10 +10,9 @@ class Board:
     def __init__(
             self,
             size: Size,
+            *,
             prey_capacity: int = np.inf,
-            prey_injection: int = 3,
             predator_capacity: int = np.inf,
-            predator_injection: int = 1,
     ):
         """
         Initializes a board with a given size.
@@ -23,11 +22,9 @@ class Board:
         self.size: Size = size
 
         self.predator_capacity: int = predator_capacity
-        self.predator_injection: int = predator_injection
         self.predators: Set[Predator] = set()
 
         self.prey_capacity: int = prey_capacity
-        self.prey_injection: int = prey_injection
         self.prey: Set[Prey] = set()
 
     @property
@@ -99,6 +96,9 @@ class Board:
         self.predators = {Predator() for _ in range(num_predators)}
         self.drop_fish(self.predators)
 
+        [prey.reproduce() for prey in self.prey]
+        [predator.reproduce() for predator in self.predators]
+
         return self._count_survivors()
 
     def step(self) -> Tuple[int, int]:
@@ -107,16 +107,25 @@ class Board:
 
         :return: numbers of prey and predators that survived the round.
         """
+        # Create new set of prey fish
         new_prey = sum((prey.children for prey in self.prey))
-        new_prey = max(self.prey_injection, min(new_prey, self.prey_capacity))
+        new_prey = min(new_prey, self.prey_capacity)
+        if new_prey == 0:
+            new_prey = 3
         self.prey = {Prey() for _ in range(new_prey)}
-        self.drop_fish(self.prey)
 
+        # Create new set of predator fish
         new_predators = sum((predator.children for predator in self.predators))
-        new_predators = max(self.predator_injection, min(new_predators, self.predator_capacity))
+        new_predators = min(new_predators, self.predator_capacity)
+        if new_predators == 0:
+            new_predators = 1
         self.predators = {Predator() for _ in range(new_predators)}
+
+        # Drop all new fish
+        self.drop_fish(self.prey)
         self.drop_fish(self.predators)
 
+        # Let fish reproduce
         [prey.reproduce() for prey in self.prey]
         [predator.reproduce() for predator in self.predators]
 
