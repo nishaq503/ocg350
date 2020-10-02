@@ -5,3 +5,5 @@
 *.png
 *.ipynb
 __pycache__
+plots
+

@@ -3,16 +3,16 @@ from typing import Set, Tuple
 import numpy as np
 
 from fish import Fish, Predator, Prey
-from utils import Size, Location
+from utils import Size, Location, BOARD_SIZE, PREY_CAPACITY, PREDATOR_CAPACITY
 
 
 class Board:
     def __init__(
             self,
-            size: Size,
+            size: Size = BOARD_SIZE,
             *,
-            prey_capacity: int = np.inf,
-            predator_capacity: int = np.inf,
+            prey_capacity: int = PREY_CAPACITY,
+            predator_capacity: int = PREDATOR_CAPACITY,
     ):
         """
         Initializes a board with a given size.
