@@ -3,3 +3,5 @@
 .vscode
 *.xlsx
 *.png
+*.ipynb
+__pycache__
