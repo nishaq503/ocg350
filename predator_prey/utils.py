@@ -5,7 +5,7 @@ import numpy as np
 from collections import namedtuple
 
 PLOTS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'plots'))
-CANVAS_SCALE = 128
+CANVAS_SCALE = 16
 
 Size = namedtuple('Size', 'width height')
 Location = namedtuple('Location', 'x y')
@@ -22,12 +22,17 @@ def increment_filename(filename: str):
     return filename
 
 
+def limits(x: np.array) -> Tuple[int, int]:
+    factor = 100 if max(x) > 200 else 10 if max(x) > 20 else 2
+    return min(x) - 1, min(x) + factor * (1 + (max(x) - min(x)) // factor)
+
+
 # Parameters that can be tweaked
 
-BOARD_SIZE: Size = Size(17, 11)
+BOARD_SIZE: Size = Size(17 * 5, 11 * 5)
 
 PREY_SIZE: Size = Size(1, 1)
-PREY_CAPACITY: int = 75
+PREY_CAPACITY: int = 75 * (5 ** 2)
 PREY_REPRODUCTION_RATE: float = 0.5
 
 PREDATOR_SIZE: Size = Size(2.5, 2.5)

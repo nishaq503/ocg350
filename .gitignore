@@ -6,4 +6,5 @@
 *.ipynb
 __pycache__
 plots
+*.pdf
 
