@@ -5,6 +5,7 @@ import numpy as np
 from collections import namedtuple
 
 PLOTS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'plots'))
+CANVAS_SCALE = 128
 
 Size = namedtuple('Size', 'width height')
 Location = namedtuple('Location', 'x y')
@@ -14,9 +15,10 @@ Measurements = List[Tuple[int, int]]
 def increment_filename(filename: str):
     while os.path.exists(filename):
         prefix = filename[:-4]  # remove file extension
+        extension = filename[-4:]
         parts = prefix.split('::')
         number = int(parts[-1]) + 1  # increment plot number
-        filename = f'{parts[0]}::{number}.png'
+        filename = f'{parts[0]}::{number}{extension}'
     return filename
 
 
@@ -29,7 +31,6 @@ PREY_CAPACITY: int = 75
 PREY_REPRODUCTION_RATE: float = 0.5
 
 PREDATOR_SIZE: Size = Size(2.5, 2.5)
-PREDATOR_CAPACITY: int = np.inf
 PREDATOR_FOOD_REQUIREMENTS: int = 3
 
 
