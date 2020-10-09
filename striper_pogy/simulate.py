@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 
 from board import Board
-from utils import Populations, increment_filename, PLOTS_PATH, line_plot, arrow_plot
+from utils import Populations, increment_filename, GAME_PATH, line_plot, arrow_plot
 
 
 def simulate_once(time_steps: int, gif_path: Optional[str] = None) -> Populations:
@@ -46,7 +46,7 @@ def draw_population_plot(populations: Populations, filename: str):
         ys=[y1, y2],
         curve_colors=['blue', 'red'],
         curve_labels=['pogies', 'stripers'],
-        plot_size=(16, 9),
+        plot_size=(7, 3),
         dpi=100,
         x_label='time',
         y_label='population',
@@ -60,8 +60,8 @@ def draw_phase_plot(populations: Populations, filename: str):
     arrow_plot(
         x=np.asarray([m[0] for m in populations], dtype=int),
         y=np.asarray([m[1] for m in populations], dtype=int),
-        plot_size=(6, 6),
-        dpi=200,
+        plot_size=(7, 3),
+        dpi=100,
         x_label='pogies',
         y_label='stripers',
         title='phase plot of striper population vs pogy population',
@@ -76,8 +76,8 @@ def draw_difference_plots(populations: Populations, prey_plot_path: str, predato
     arrow_plot(
         x=prey_population,
         y=prey_delta,
-        plot_size=(6, 6),
-        dpi=200,
+        plot_size=(7, 3),
+        dpi=100,
         x_label='population',
         y_label='delta',
         title='pogies delta vs population',
@@ -89,8 +89,8 @@ def draw_difference_plots(populations: Populations, prey_plot_path: str, predato
     arrow_plot(
         x=predator_population,
         y=predator_delta,
-        plot_size=(6, 6),
-        dpi=200,
+        plot_size=(7, 3),
+        dpi=100,
         x_label='population',
         y_label='delta',
         title='stripers delta vs population',
@@ -129,7 +129,7 @@ def create_paths(directory: str, erase: bool) -> Dict[str, str]:
 
 
 def simulate_multiple(directory: str, time_steps: int, num_simulations: int, animate: bool):
-    paths: Dict[str, str] = create_paths(directory, erase=True)
+    paths: Dict[str, str] = create_paths(directory, erase=False)
     for i in range(num_simulations):
         if (i == 0) and animate:
             populations = simulate_once(time_steps=time_steps, gif_path=paths['gif_path'])
@@ -143,4 +143,4 @@ def simulate_multiple(directory: str, time_steps: int, num_simulations: int, ani
 
 if __name__ == '__main__':
     np.random.seed(0)
-    simulate_multiple(PLOTS_PATH, time_steps=128, num_simulations=10, animate=True)
+    simulate_multiple(GAME_PATH, time_steps=128, num_simulations=1, animate=False)

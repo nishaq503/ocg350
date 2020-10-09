@@ -5,8 +5,8 @@ from matplotlib import pyplot as plt
 import numpy as np
 from collections import namedtuple
 
-PLOTS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'plots'))
-EQUATIONS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'equations'))
+GAME_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'plots-game'))
+EQUATIONS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'plots-equations'))
 
 Size = namedtuple('Size', 'width height')
 Location = namedtuple('Location', 'x y')
@@ -61,7 +61,7 @@ def line_plot(
     plt.ylabel(y_label)
 
     plt.title(title)
-    plt.legend('lower right')
+    plt.legend()
     plt.savefig(filename, bbox_inches='tight', pad_inches=0.25)
     plt.close('all')
     return
@@ -97,16 +97,17 @@ def arrow_plot(
 
 
 # Parameters that can be tweaked
-SIZE_MULTIPLIER = 5
+SIZE_MULTIPLIER = 5  # 1.5
 BOARD_SIZE: Size = Size(17 * SIZE_MULTIPLIER, 11 * SIZE_MULTIPLIER)
 CANVAS_SCALE = (2 ** 11) // max(BOARD_SIZE)
 
-PREY_SIZE: Size = Size(1, 1)
+PREY_SIZE: Size = Size(1, 1)  # 1.5
 PREY_CAPACITY: int = 75 * (SIZE_MULTIPLIER ** 2)
-PREY_REPRODUCTION_RATE: float = .5
+# PREY_CAPACITY: int = 75  # 100
+PREY_REPRODUCTION_RATE: float = 0.5  # .25
 
-PREDATOR_SIZE: Size = Size(2.5, 2.5)
-PREDATOR_FOOD_REQUIREMENTS: int = 3
+PREDATOR_SIZE: Size = Size(2.5, 2.5)  # 4
+PREDATOR_FOOD_REQUIREMENTS: int = 3  # 2
 
 
 def predator_reproduction_function(num_eaten: int) -> int:
