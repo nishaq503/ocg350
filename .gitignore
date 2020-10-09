@@ -6,5 +6,6 @@
 *.ipynb
 __pycache__
 plots
+equations
 *.pdf
 
