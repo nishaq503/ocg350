@@ -1,25 +1,27 @@
-from typing import Dict
+import os
 
-from simulate import draw_population_plot, draw_phase_plot, draw_difference_plots, create_paths
-from utils import PREY_REPRODUCTION_RATE as R_M, PREY_CAPACITY as K, PREY_SIZE, PREDATOR_SIZE, BOARD_SIZE, Populations, EQUATIONS_PATH
+from params import *
+from simulate import draw_population_plot, draw_phase_plot, draw_difference_plots
+from utils import Populations, EQUATIONS_PATH
 
-# pogy population above which reproduction rate falls
-R_MARGIN = K / (1 + R_M)
-
-# probability that prey and predator overlap
+# probability that a single pogy overlaps a single striper
 PREY_PREDATOR_X = (PREY_SIZE.width + PREDATOR_SIZE.width) / BOARD_SIZE.width
 PREY_PREDATOR_Y = (PREY_SIZE.height + PREDATOR_SIZE.height) / BOARD_SIZE.height
 PREY_PREDATOR_OVERLAP = PREY_PREDATOR_X * PREY_PREDATOR_Y
 
-# probability that two predators are close enough to share fish
+# probability that two stripers are close enough to share a single pogy
 PREDATOR_PREDATOR_OVERLAP = PREY_PREDATOR_OVERLAP * PREY_PREDATOR_OVERLAP
 
 
 def next_num_pogies(num_pogies: float, num_stripers: float) -> float:
-    reproduction_rate = R_M if num_pogies < R_MARGIN else K / num_pogies - 1
+    # pogy population above which reproduction rate falls
+    if num_pogies < PREY_CAPACITY / (1 + PREY_REPRODUCTION_RATE):
+        reproduction_rate = PREY_REPRODUCTION_RATE
+    else:
+        reproduction_rate = PREY_CAPACITY / num_pogies - 1
     survival_rate = (1 - PREY_PREDATOR_OVERLAP) ** num_stripers
     next_num = (1 + reproduction_rate) * num_pogies * survival_rate
-    return max(next_num, 3.)
+    return max(min(next_num, PREY_CAPACITY), 3)
 
 
 def next_num_stripers(num_pogies: float, num_stripers: float) -> float:
@@ -29,7 +31,7 @@ def next_num_stripers(num_pogies: float, num_stripers: float) -> float:
     return max(next_num, 1)
 
 
-def simulate_once(time_steps: int, starting_pogies: int, starting_stripers: int, paths: Dict[str, str]):
+def simulate_once(time_steps: int, starting_pogies: int, starting_stripers: int, path: str):
     populations: Populations = [(starting_pogies, starting_stripers)]
 
     for _ in range(time_steps):
@@ -38,12 +40,27 @@ def simulate_once(time_steps: int, starting_pogies: int, starting_stripers: int,
         next_stripers = next_num_stripers(prev_pogies, prev_stripers)
         populations.append((next_pogies, next_stripers))
 
-    draw_population_plot(populations, paths['population_path'])
-    draw_phase_plot(populations, paths['phase_path'])
-    draw_difference_plots(populations, paths['prey_difference_path'], paths['predator_difference_path'])
+    draw_population_plot(populations, os.path.join(path, 'population-vs-time.png'))
+    draw_phase_plot(populations, os.path.join(path, 'phase-plot.png'))
+    draw_difference_plots(
+        populations,
+        prey_plot_path=os.path.join(path, 'prey-difference.png'),
+        predator_plot_path=os.path.join(path, 'predator-difference.png'),
+    )
 
     return
 
 
 if __name__ == '__main__':
-    simulate_once(128, 3, 1, create_paths(EQUATIONS_PATH, erase=True))
+    _path = os.path.join(EQUATIONS_PATH, 'large')
+    os.makedirs(_path, exist_ok=True)
+    if ERASE:
+        for _root, _, _files in os.walk(_path):
+            [os.remove(os.path.join(_root, _file)) for _file in _files]
+
+    simulate_once(
+        time_steps=TIME_STEPS,
+        starting_pogies=STARTING_PREY,
+        starting_stripers=STARTING_PREDATORS,
+        path=_path
+    )

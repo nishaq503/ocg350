@@ -1,24 +1,28 @@
 from typing import Set, Tuple
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 from fish import Predator, Prey
-from utils import Size, BOARD_SIZE, PREY_CAPACITY, CANVAS_SCALE
+from params import *
+from utils import Size
 
 
 class Board:
     def __init__(
             self,
+            *,  # all arguments after a * must be passed by name.
             size: Size = BOARD_SIZE,
-            *,
-            starting_prey: int = 3,
+            starting_prey: int = STARTING_PREY,
             prey_capacity: int = PREY_CAPACITY,
-            starting_predators: int = 1,
+            starting_predators: int = STARTING_PREDATORS,
     ):
         """
         Initializes a board with a given size.
 
         :param size: (width, height) of board to use.
+        :param starting_prey: number of prey with which to start a simulation.
+        :param prey_capacity: carrying capacity of the prey.
+        :param starting_predators: number of predators with which to start a simulation.
         """
         self.size: Size = size
 
@@ -71,8 +75,14 @@ class Board:
                     food.add(prey)
             predator.eat(food)
 
-        # Let fish reproduce
-        [prey.reproduce() for prey in self.prey]
+        # adjust the reproduction rate of prey if their population is too close to the carrying capacity
+        if len(self.prey) < self.prey_capacity / (1 + PREY_REPRODUCTION_RATE):
+            reproduction_rate = PREY_REPRODUCTION_RATE
+        else:
+            reproduction_rate = self.prey_capacity / len(self.prey) - 1
+
+        # Let the fish reproduce
+        [prey.reproduce(reproduction_rate) for prey in self.prey]
         [predator.reproduce() for predator in self.predators]
 
         return self._count_survivors()
@@ -82,7 +92,15 @@ class Board:
         im: Image = Image.new(mode='RGB', size=image_size, color='white')
         draw: ImageDraw = ImageDraw.Draw(im=im)
 
-        [fish.draw(draw, scale) for fish in self.predators]
         [fish.draw(draw, scale) for fish in self.prey]
+        [fish.draw(draw, scale) for fish in self.predators]
+
+        num_prey, num_predators = self._count_survivors()
+        draw.text(
+            xy=(64, 32),
+            text=f'prey: {num_prey}\npredators: {num_predators}',
+            fill=(0, 255, 0),
+            font=ImageFont.truetype(font='./arial.ttf', size=48)
+        )
 
         return im

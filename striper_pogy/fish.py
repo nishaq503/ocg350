@@ -1,18 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Set, Tuple
+from typing import Set, Tuple
 
 import numpy as np
 from PIL import ImageDraw
 
-from utils import (
-    Size,
-    Location,
-    PREDATOR_SIZE,
-    PREY_SIZE,
-    PREY_REPRODUCTION_RATE,
-    prey_reproduction_function,
-    predator_reproduction_function,
-)
+from params import PREY_SIZE, PREY_REPRODUCTION_RATE, PREDATOR_SIZE, PREDATOR_FOOD_REQUIREMENTS
+from utils import Size, Location
 
 
 class Fish(ABC):
@@ -51,7 +44,7 @@ class Fish(ABC):
         pass
 
     @abstractmethod
-    def reproduce(self, function: Callable[[float], int]) -> 'Fish':
+    def reproduce(self, *args) -> 'Fish':
         pass
 
     def _drop(self, board_size: Size) -> Location:
@@ -74,7 +67,8 @@ class Fish(ABC):
         x1, y1 = self.x - half_width, self.y - half_height
         x2, y2 = self.x + half_width, self.y + half_height
         xy = x1 * scale, y1 * scale, x2 * scale, y2 * scale
-        draw.rectangle(xy, fill=self.fill, outline=self.outline)
+        fill = self.fill if self.children > 0 else (211, 211, 211)
+        draw.rectangle(xy, fill=fill, outline=self.outline)
         return
 
 
@@ -88,35 +82,28 @@ class Prey(Fish):
             self,
             board_size: Size,
             fish_size: Size = PREY_SIZE,
-            reproduction_rate: float = PREY_REPRODUCTION_RATE,
     ):
         """
         Creates an object representing a Prey Fish.
 
         :param board_size: the size of the board on which to simulate the predator-prey model.
         :param fish_size: the size of the fish.
-        :param reproduction_rate: Reproduction rate (between 0 and 1) of the fish.
         """
         super().__init__(board_size, fish_size)
-        if 0 <= reproduction_rate <= 1:
-            self.reproduction_rate: float = reproduction_rate
-        else:
-            raise ValueError(f'Reproduction rate must be in the [0, 1] range. Got {reproduction_rate:.2f} instead.')
         self.fill: Tuple[int, int, int] = (0, 0, 255)  # blue
-
         self.got_eaten: bool = False
 
     def __hash__(self):
         return hash(f'prey ({self.x:.2f},{self.y:.2f})')
 
-    def reproduce(self, function: Callable[[float], int] = prey_reproduction_function) -> 'Prey':
+    def reproduce(self, rate: float = PREY_REPRODUCTION_RATE) -> 'Prey':
         """
         The fish has either one or two children based on its reproduction rate.
 
-        :param function: reproduction function to use.
+        :param rate: enter reproduction rate to use instead of default rate.
         :return: the fish modified with its number of children.
         """
-        self.children = 0 if self.got_eaten else function(self.reproduction_rate)
+        self.children = 0 if self.got_eaten else 1 if np.random.uniform() < rate else 2
         return self
 
 
@@ -162,12 +149,12 @@ class Predator(Fish):
         self.num_eaten = len(food)
         return self
 
-    def reproduce(self, function: Callable[[int], int] = predator_reproduction_function) -> 'Predator':
+    def reproduce(self, food_requirement: float = PREDATOR_FOOD_REQUIREMENTS) -> 'Predator':
         """
         Let the Predator reproduce based on the number of fish it ate.
 
-        :param function: reproduction function to use.
+        :param food_requirement: enter food requirement to use instead of default value
         :return: the predator modified by the number of children its going to have.
         """
-        self.children = function(self.num_eaten)
+        self.children = int(np.floor(self.num_eaten / food_requirement))
         return self
