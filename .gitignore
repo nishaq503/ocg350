@@ -11,4 +11,5 @@ images
 *.pdf
 *.zip
 plots*
+.ipynb_checkpoints
 

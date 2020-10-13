@@ -15,8 +15,14 @@ class Fish(ABC):
     This defines properties and methods that are common to all fish.
     """
     def __init__(self, board_size: Size, fish_size: Size):
+        if not (fish_size[0] > 0) and (fish_size[1] > 0):
+            raise ValueError(f'The dimensions of the board must be positive numbers. Got ({fish_size[0]}, {fish_size[1]}) instead')
         self.size: Size = fish_size
+
+        if not (board_size[0] > 0) and (board_size[1] > 0):
+            raise ValueError(f'The dimensions of the board must be positive numbers. Got ({board_size[0]}, {board_size[1]}) instead')
         self.location: Location = self._drop(board_size)
+
         self.children: int = 0
 
         # outline and fill are for drawing the fish as rectangles
@@ -78,11 +84,7 @@ class Prey(Fish):
 
     This class defines those properties and methods that are specific to prey fish.
     """
-    def __init__(
-            self,
-            board_size: Size,
-            fish_size: Size = PREY_SIZE,
-    ):
+    def __init__(self, board_size: Size, fish_size: Size = PREY_SIZE):
         """
         Creates an object representing a Prey Fish.
 
@@ -103,7 +105,10 @@ class Prey(Fish):
         :param rate: enter reproduction rate to use instead of default rate.
         :return: the fish modified with its number of children.
         """
-        self.children = 0 if self.got_eaten else 1 if np.random.uniform() < rate else 2
+        if rate < 0:
+            raise ValueError(f'Prey reproduction rate must be a non-negative number. Got {rate:.3f} instead.')
+
+        self.children = 0 if self.got_eaten else 2 if np.random.uniform() < rate else 1
         return self
 
 
@@ -156,5 +161,7 @@ class Predator(Fish):
         :param food_requirement: enter food requirement to use instead of default value
         :return: the predator modified by the number of children its going to have.
         """
+        if food_requirement < 0:
+            raise ValueError(f'Predator food requirements must be non-negative. Got {food_requirement:.3f} instead.')
         self.children = int(np.floor(self.num_eaten / food_requirement))
         return self

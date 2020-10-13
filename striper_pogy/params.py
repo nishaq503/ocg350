@@ -10,7 +10,7 @@ BOARD_SIZE: Size = Size(17 * SIZE_MULTIPLIER, 11 * SIZE_MULTIPLIER)
 CANVAS_SCALE = (2 ** 12) // max(BOARD_SIZE)
 
 PREY_SIZE: Size = Size(1, 1)
-PREY_CAPACITY: int = 75 * (SIZE_MULTIPLIER ** 2)
+PREY_CAPACITY: int = int(75 * (SIZE_MULTIPLIER ** 2))
 PREY_REPRODUCTION_RATE: float = 0.5
 STARTING_PREY = 3
 
@@ -19,7 +19,10 @@ STARTING_PREDATORS = 1
 
 # number of prey that need to be eaten to let stripers to survive and (maybe) reproduce.
 # e.g. with default value of 3, predator survives with 3, reproduces once with 6, reproduces twice with 9, and so on.
-PREDATOR_FOOD_REQUIREMENTS: int = 3
+PREDATOR_FOOD_REQUIREMENTS = 3
+
+# fraction of Menhaden to remove by fishing each round
+FISHERY = None
 
 # Number of times to run the simulation
 NUM_SIMULATIONS = 1

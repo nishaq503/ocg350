@@ -1,4 +1,5 @@
-from typing import Set, Tuple
+import numpy as np
+from typing import Set, Tuple, Optional
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -15,6 +16,7 @@ class Board:
             starting_prey: int = STARTING_PREY,
             prey_capacity: int = PREY_CAPACITY,
             starting_predators: int = STARTING_PREDATORS,
+            fishery: Optional[float] = FISHERY
     ):
         """
         Initializes a board with a given size.
@@ -23,15 +25,31 @@ class Board:
         :param starting_prey: number of prey with which to start a simulation.
         :param prey_capacity: carrying capacity of the prey.
         :param starting_predators: number of predators with which to start a simulation.
+        :param fishery: fraction of prey to remove each time step dur to fishing.
         """
+        if not (size[0] > 0) and (size[1] > 0):
+            raise ValueError(f'The dimensions of the board must be positive numbers. Got ({size[0]}, {size[1]}) instead')
         self.size: Size = size
 
+        if not (starting_prey > 0):
+            raise ValueError(f'Must start with at least one prey fish. Got {starting_prey} instead')
         self.starting_prey = starting_prey
-        self.predators: Set[Predator] = set()
 
-        self.starting_predators = starting_predators
+        if not (prey_capacity > 0):
+            raise ValueError(f'Prey capacity must be a positive number. Got {prey_capacity} instead')
         self.prey_capacity: int = prey_capacity
+
+        if not (starting_predators > 0):
+            raise ValueError(f'Must start with at least one predator fish. Got {starting_predators} instead')
+        self.starting_predators = starting_predators
+
+        if fishery is not None:
+            if not (0 <= fishery <= 1):
+                raise ValueError(f'fishery fraction must be between 0 and 1. Got {fishery:.2f} instead.')
+        self.fishery: Optional[float] = fishery
+
         self.prey: Set[Prey] = set()
+        self.predators: Set[Predator] = set()
 
     @property
     def width(self) -> float:
@@ -74,6 +92,12 @@ class Board:
                 if (not prey.got_eaten) and predator.touches(prey):
                     food.add(prey)
             predator.eat(food)
+
+        # apply fishery
+        if self.fishery is not None:
+            for prey in self.prey:
+                if (not prey.got_eaten) and (np.random.uniform() < self.fishery):
+                    prey.got_eaten = True
 
         # adjust the reproduction rate of prey if their population is too close to the carrying capacity
         if len(self.prey) < self.prey_capacity / (1 + PREY_REPRODUCTION_RATE):

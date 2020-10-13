@@ -1,13 +1,13 @@
 import os
 from collections import namedtuple
-from typing import List, Tuple, Union
+from typing import List, Tuple
 
 import numpy as np
 from matplotlib import pyplot as plt
 
 Size = namedtuple('Size', 'width height')
 Location = namedtuple('Location', 'x y')
-Populations = List[Tuple[Union[int, float], Union[int, float]]]
+Populations = List[Tuple[int, int]]
 
 PLOTS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'plots'))
 GAME_PATH = os.path.join(PLOTS_PATH, 'simulations')

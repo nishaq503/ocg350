@@ -57,8 +57,8 @@ def draw_population_plot(populations: Populations, filename: str):
         ys=[pogies, stripers],
         curve_colors=['blue', 'red'],
         curve_labels=['pogies', 'stripers'],
-        plot_size=(16, 10),
-        dpi=200,
+        plot_size=(7, 3),
+        dpi=100,
         x_label='time',
         y_label='population',
         title='populations vs time',
@@ -73,8 +73,8 @@ def draw_phase_plot(populations: Populations, filename: str):
     arrow_plot(
         x=np.asarray([m[0] for m in populations], dtype=int),
         y=np.asarray([m[1] for m in populations], dtype=int),
-        plot_size=(16, 10),
-        dpi=200,
+        plot_size=(7, 3),
+        dpi=100,
         x_label='pogies',
         y_label='stripers',
         title='striper population vs pogy population',
@@ -90,8 +90,8 @@ def draw_difference_plots(populations: Populations, prey_plot_path: str, predato
     arrow_plot(
         x=prey_population,
         y=prey_delta,
-        plot_size=(16, 10),
-        dpi=200,
+        plot_size=(7, 3),
+        dpi=100,
         x_label='population',
         y_label='delta',
         title='pogies difference vs population',
@@ -103,8 +103,8 @@ def draw_difference_plots(populations: Populations, prey_plot_path: str, predato
     arrow_plot(
         x=predator_population,
         y=predator_delta,
-        plot_size=(16, 10),
-        dpi=200,
+        plot_size=(7, 3),
+        dpi=100,
         x_label='population',
         y_label='delta',
         title='stripers difference vs population',
@@ -113,39 +113,51 @@ def draw_difference_plots(populations: Populations, prey_plot_path: str, predato
     return
 
 
-if __name__ == '__main__':
+def main(
+        plots_path: str = GAME_PATH,
+        erase: bool = ERASE,
+        animate: bool = ANIMATE,
+        num_simulations: int = NUM_SIMULATIONS,
+        time_steps: int = TIME_STEPS,
+):
     # Create required directories and remove old files if necessary
-    os.makedirs(GAME_PATH, exist_ok=True)
-    if ERASE:
-        for _root, _, _files in os.walk(GAME_PATH):
-            [os.remove(os.path.join(_root, _file)) for _file in _files]
+    os.makedirs(plots_path, exist_ok=True)
+    if erase:
+        for root, _, files in os.walk(plots_path):
+            [os.remove(os.path.join(root, file)) for file in files]
 
-    _population_dir = os.path.join(GAME_PATH, 'population-vs-time')
-    _phase_dir = os.path.join(GAME_PATH, 'phase-plots')
-    _prey_difference_dir = os.path.join(GAME_PATH, 'prey-difference')
-    _predator_difference_dir = os.path.join(GAME_PATH, 'predator-difference')
+    population_dir = os.path.join(plots_path, 'population-vs-time')
+    phase_dir = os.path.join(plots_path, 'phase-plots')
+    prey_difference_dir = os.path.join(plots_path, 'prey-difference')
+    predator_difference_dir = os.path.join(plots_path, 'predator-difference')
 
     [os.makedirs(_dir, exist_ok=True) for _dir in [
-        _population_dir,
-        _phase_dir,
-        _prey_difference_dir,
-        _predator_difference_dir
+        population_dir,
+        phase_dir,
+        prey_difference_dir,
+        predator_difference_dir
     ]]
 
     # create file names for the first of each plot
-    _gif_path = os.path.join(GAME_PATH, 'animation.gif')
-    _population_path = os.path.join(_population_dir, 'plot::0.png')
-    _phase_path = os.path.join(_phase_dir, 'plot::0.png')
-    _prey_difference_path = os.path.join(_prey_difference_dir, 'plot::0.png')
-    _predator_difference_path = os.path.join(_predator_difference_dir, 'plot::0.png')
+    gif_path = os.path.join(plots_path, 'animation.gif')
+    population_path = os.path.join(population_dir, 'plot::0.png')
+    phase_path = os.path.join(phase_dir, 'plot::0.png')
+    prey_difference_path = os.path.join(prey_difference_dir, 'plot::0.png')
+    predator_difference_path = os.path.join(predator_difference_dir, 'plot::0.png')
 
     # run simulation for the requested number of times.
     np.random.seed(0)
-    for _i in range(NUM_SIMULATIONS):
-        if (_i == 0) and ANIMATE:
-            _populations = simulate_once(time_steps=TIME_STEPS, gif_path=_gif_path)
+    for i in range(num_simulations):
+        if (i == 0) and animate:
+            populations = simulate_once(time_steps=time_steps, gif_path=gif_path)
         else:
-            _populations = simulate_once(time_steps=TIME_STEPS, gif_path=None)
-        draw_population_plot(_populations, _population_path)
-        draw_phase_plot(_populations, _phase_path)
-        draw_difference_plots(_populations, _prey_difference_path, _predator_difference_path)
+            populations = simulate_once(time_steps=time_steps, gif_path=None)
+        draw_population_plot(populations, population_path)
+        draw_phase_plot(populations, phase_path)
+        draw_difference_plots(populations, prey_difference_path, predator_difference_path)
+
+    return
+
+
+if __name__ == '__main__':
+    main()
