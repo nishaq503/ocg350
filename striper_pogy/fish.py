@@ -108,7 +108,7 @@ class Prey(Fish):
         if rate < 0:
             raise ValueError(f'Prey reproduction rate must be a non-negative number. Got {rate:.3f} instead.')
 
-        self.children = 0 if self.got_eaten else 2 if np.random.uniform() < rate else 1
+        self.children = 0 if self.got_eaten else 1 if np.random.uniform() > rate else 2
         return self
 
 

@@ -10,7 +10,7 @@ Location = namedtuple('Location', 'x y')
 Populations = List[Tuple[int, int]]
 
 PLOTS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'plots'))
-GAME_PATH = os.path.join(PLOTS_PATH, 'simulations')
+SIMULATIONS_PATH = os.path.join(PLOTS_PATH, 'simulations')
 EQUATIONS_PATH = os.path.join(PLOTS_PATH, 'equations')
 
 

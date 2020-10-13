@@ -6,7 +6,7 @@ from PIL import Image
 
 from board import Board
 from params import *
-from utils import Populations, increment_filename, GAME_PATH, line_plot, arrow_plot
+from utils import Populations, increment_filename, SIMULATIONS_PATH, line_plot, arrow_plot
 
 
 def simulate_once(time_steps: int, gif_path: Optional[str] = None) -> Populations:
@@ -57,8 +57,8 @@ def draw_population_plot(populations: Populations, filename: str):
         ys=[pogies, stripers],
         curve_colors=['blue', 'red'],
         curve_labels=['pogies', 'stripers'],
-        plot_size=(7, 3),
-        dpi=100,
+        plot_size=(16, 10),
+        dpi=200,
         x_label='time',
         y_label='population',
         title='populations vs time',
@@ -73,8 +73,8 @@ def draw_phase_plot(populations: Populations, filename: str):
     arrow_plot(
         x=np.asarray([m[0] for m in populations], dtype=int),
         y=np.asarray([m[1] for m in populations], dtype=int),
-        plot_size=(7, 3),
-        dpi=100,
+        plot_size=(16, 10),
+        dpi=200,
         x_label='pogies',
         y_label='stripers',
         title='striper population vs pogy population',
@@ -90,8 +90,8 @@ def draw_difference_plots(populations: Populations, prey_plot_path: str, predato
     arrow_plot(
         x=prey_population,
         y=prey_delta,
-        plot_size=(7, 3),
-        dpi=100,
+        plot_size=(16, 10),
+        dpi=200,
         x_label='population',
         y_label='delta',
         title='pogies difference vs population',
@@ -103,8 +103,8 @@ def draw_difference_plots(populations: Populations, prey_plot_path: str, predato
     arrow_plot(
         x=predator_population,
         y=predator_delta,
-        plot_size=(7, 3),
-        dpi=100,
+        plot_size=(16, 10),
+        dpi=200,
         x_label='population',
         y_label='delta',
         title='stripers difference vs population',
@@ -114,7 +114,7 @@ def draw_difference_plots(populations: Populations, prey_plot_path: str, predato
 
 
 def main(
-        plots_path: str = GAME_PATH,
+        plots_path: str = SIMULATIONS_PATH,
         erase: bool = ERASE,
         animate: bool = ANIMATE,
         num_simulations: int = NUM_SIMULATIONS,
