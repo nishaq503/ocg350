@@ -8,15 +8,14 @@ from utils import EQUATIONS_PATH
 # Redefining Populations for cleaner usage
 Populations = List[Tuple[Union[int, float], Union[int, float]]]
 
-# probability that a single pogy overlaps a single striper
-PREY_PREDATOR_X = (PREY_SIZE.width + PREDATOR_SIZE.width) / BOARD_SIZE.width
-PREY_PREDATOR_Y = (PREY_SIZE.height + PREDATOR_SIZE.height) / BOARD_SIZE.height
-PREY_PREDATOR_OVERLAP = PREY_PREDATOR_X * PREY_PREDATOR_Y
+PREY_MARGIN = (BOARD_SIZE.width - PREY_SIZE.width) * (BOARD_SIZE.height - PREY_SIZE.height)
+PREDATOR_MARGIN = (BOARD_SIZE.width - PREDATOR_SIZE.width) * (BOARD_SIZE.height - PREDATOR_SIZE.height)
 
-# probability that two stripers are close enough to share a single pogy
-PREDATOR_PREDATOR_OVERLAP = PREY_PREDATOR_OVERLAP * PREY_PREDATOR_OVERLAP
+PREDATOR_PREY_AREA = (PREDATOR_SIZE.width + PREY_SIZE.width) * (PREDATOR_SIZE.height + PREY_SIZE.height)
+PREY_PREDATOR_OVERLAP = PREDATOR_PREY_AREA / PREY_MARGIN
 
-print(f'{PREY_PREDATOR_OVERLAP:e}, {PREDATOR_PREDATOR_OVERLAP:e}')
+PREDATOR_PREDATOR_AREA = (PREDATOR_SIZE.width * 2) * (PREDATOR_SIZE.height * 2)
+PREDATOR_PREDATOR_OVERLAP = PREDATOR_PREDATOR_AREA / PREDATOR_MARGIN
 
 
 def next_num_pogies(num_pogies: float, num_stripers: float) -> float:
