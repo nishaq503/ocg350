@@ -12,4 +12,8 @@ images
 *.zip
 plots*
 .ipynb_checkpoints
+*.doc
+*.docx
+*.ppt
+*.pptx
 

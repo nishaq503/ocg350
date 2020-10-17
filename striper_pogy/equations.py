@@ -36,7 +36,8 @@ def next_num_stripers(num_pogies: float, num_stripers: float) -> float:
     return max(next_num, 1)
 
 
-def simulate_once(time_steps: int, starting_pogies: int, starting_stripers: int, path: str):
+# noinspection DuplicatedCode
+def simulate_once(time_steps: int, starting_pogies: int, starting_stripers: int, plots_path: str):
     populations: Populations = [(starting_pogies, starting_stripers)]
 
     for _ in range(time_steps):
@@ -45,12 +46,35 @@ def simulate_once(time_steps: int, starting_pogies: int, starting_stripers: int,
         next_stripers = next_num_stripers(prev_pogies, prev_stripers)
         populations.append((next_pogies, next_stripers))
 
-    draw_population_plot(populations, os.path.join(path, 'population-vs-time.png'))
-    draw_phase_plot(populations, os.path.join(path, 'phase-plot.png'))
+    os.makedirs(plots_path, exist_ok=True)
+    if ERASE:
+        for root, _, files in os.walk(plots_path):
+            [os.remove(os.path.join(root, file)) for file in files]
+
+    population_dir = os.path.join(plots_path, 'population-vs-time')
+    phase_dir = os.path.join(plots_path, 'phase-plots')
+    prey_difference_dir = os.path.join(plots_path, 'prey-difference')
+    predator_difference_dir = os.path.join(plots_path, 'predator-difference')
+
+    [os.makedirs(_dir, exist_ok=True) for _dir in [
+        population_dir,
+        phase_dir,
+        prey_difference_dir,
+        predator_difference_dir
+    ]]
+
+    # create file names for the first of each plot
+    population_path = os.path.join(population_dir, 'plot::0.png')
+    phase_path = os.path.join(phase_dir, 'plot::0.png')
+    prey_difference_path = os.path.join(prey_difference_dir, 'plot::0.png')
+    predator_difference_path = os.path.join(predator_difference_dir, 'plot::0.png')
+
+    draw_population_plot(populations, population_path)
+    draw_phase_plot(populations, phase_path)
     draw_difference_plots(
         populations,
-        prey_plot_path=os.path.join(path, 'prey-difference.png'),
-        predator_plot_path=os.path.join(path, 'predator-difference.png'),
+        prey_plot_path=prey_difference_path,
+        predator_plot_path=predator_difference_path,
     )
 
     return
@@ -66,5 +90,5 @@ if __name__ == '__main__':
         time_steps=TIME_STEPS,
         starting_pogies=STARTING_PREY,
         starting_stripers=STARTING_PREDATORS,
-        path=EQUATIONS_PATH
+        plots_path=EQUATIONS_PATH
     )
