@@ -1,0 +1,76 @@
+\section{Diet Matrices}
+\label{sec:diet-matrices}
+
+We assume the following efficiencies for these species:
+
+\begin{itemize}
+    \item Phytoplankton: $0.9$,
+    \item Zooplankton: $0.3$,
+    \item Copepod: $0.25$,
+    \item Shrimp: $0.2$,
+    \item Lobster: $0.2$,
+    \item Lantern Fish: $0.15$,
+    \item Squid: $0.12$,
+    \item Tuna: $0.1$,
+    \item Marlin: $0.1$,
+    \item Shark: $0.1$, and
+    \item Human (when included): $0.1$.
+\end{itemize}
+
+\newpage
+
+The diet matrix without humans, i.e. corresponding to Figure~\ref{fig:without-humans}, is:
+
+\begin{gather*}
+    \begin{bmatrix}
+        1.11 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        -0.5 & 3.33 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        -0.3 & -0.3 & 4 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        -0.2 & -0.3 & 0 & 5 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & -0.2 & -0.5 & -0.4 & 5 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & -0.3 & 0 & 0 & 6.67 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & -1 & 8.33 & 0 & 0 & 0 \\
+        0 & 0 & 0 & -0.5 & -0.5 & 0 & -0.4 & 10 & 0 & 0 \\
+        0 & 0 & 0 & 0 & -0.5 & 0 & -0.3 & -0.5 & 10 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & -0.3 & -0.5 & -1 & 10
+    \end{bmatrix}
+\end{gather*}
+
+\newpage
+
+The diet matrix with humans, i.e. corresponding to Figure~\ref{fig:with-humans}, is:
+
+\begin{gather*}
+    \begin{bmatrix}
+        1.11 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        -0.5 & 3.33 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        -0.3 & -0.3 & 4 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        -0.2 & -0.3 & 0 & 5 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & -0.2 & -0.5 & -0.2 & 5 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & -0.3 & 0 & 0 & 6.67 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & -1 & 8.33 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & -0.25 & -0.25 & 0 & -0.4 & 10 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & -0.25 & 0 & -0.3 & -0.25 & 10 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & -0.3 & -0.25 & -0.5 & 10 & 0 \\
+        0 & 0 & 0 & -0.5 & -0.5 & 0 & 0 & -0.5 & -0.5 & 0 & 10
+    \end{bmatrix}
+\end{gather*}
+
+\newpage
+
+Each of these diet matrices can be used to form a system of linear equations which can be solved, using some matrix algebra, to calculate the flow of energy into each species in the food web.
+The form of these equations is as follows:
+
+\begin{equation*}
+    M \cdot P = C
+\end{equation*}
+
+Where:
+\begin{itemize}
+    \item $M$ is the diet matrix,
+    \item $P$ is the column vector representing the participants in the food web, and
+    \item $C$ is the column vector of assumed constants, i.e. the amount of energy input to the food web.
+\end{itemize}
+
+We assume that the gross primary production in Narragansett Bay is $690 \ gCm^{-2}yr^{-1}$.
+Thus, $C$ is a column vector whose first element is $690$ and every other element is $0$.

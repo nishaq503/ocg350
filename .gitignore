@@ -18,4 +18,11 @@ plots*
 *.pptx
 *.dot
 *.txt
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.gz
 

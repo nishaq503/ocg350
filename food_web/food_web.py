@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy.linalg import solve
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'images'))
 
 PARTICIPANTS: List[str] = [
     'Sun',
@@ -96,7 +96,11 @@ def _create_dotfile():
 def _write_latex(diet_matrix: np.array):
     lines: List[str] = ['\\begin{bmatrix}']
     for row in diet_matrix:
-        lines.append('    ' + ' & '.join([f'{v:.2f}' for v in row]) + ' \\\\')
+        line = [f'{v:.2f}' for v in row]
+        line = [s[:-1] if s[-1] == '0' else s for s in line]
+        line = [s[:-1] if s[-1] == '0' else s for s in line]
+        line = [s[:-1] if s[-1] == '.' else s for s in line]
+        lines.append('    ' + ' & '.join(line) + ' \\\\')
     else:
         lines[-1] = lines[-1][:-3]
         lines.append('\\end{bmatrix}')
@@ -168,12 +172,12 @@ def plot_bar_chart(with_humans: np.array, without_humans: np.array, title: str, 
     plt.bar(x + .21, with_humans, align='center', log=True, width=.4, color='red')
 
     ax.set_xticks(range(len(PARTICIPANTS) - 1))
-    ax.set_xticklabels(PARTICIPANTS[1:], rotation=45)
+    ax.set_xticklabels(PARTICIPANTS[1:], rotation=45, fontsize=14)
 
-    plt.xlabel('Participants', fontsize=16)
-    plt.ylabel('Consumption (gC m^-2 yr^-1)', fontsize=16)
+    plt.xlabel('Participants', fontsize=18)
+    plt.ylabel('Consumption (gC m^-2 yr^-1)', fontsize=18)
 
-    plt.title(title, fontsize=24)
+    plt.title(title, fontsize=20)
     plt.savefig(filename, bbox_inches='tight', pad_inches=0.25)
     plt.close('all')
     return
@@ -183,4 +187,4 @@ if __name__ == '__main__':
     _filename = os.path.join(BASE_DIR, 'bar_plots.png')
     _without_humans = solve_food_web(input_flux=690, include_humans=False)
     _with_humans = solve_food_web(input_flux=690, include_humans=True)
-    plot_bar_chart(_with_humans, _without_humans, 'Food Web with (red) and without (blue) Humans', _filename)
+    plot_bar_chart(_with_humans, _without_humans, 'Food Web excluding (left) and including (right) Humans', _filename)
