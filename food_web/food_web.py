@@ -74,8 +74,8 @@ def check_web():
     return
 
 
-def _create_dotfile(include_humans: bool):
-    name: str = 'with_humans' if include_humans else 'without_humans'
+def _create_dotfile():
+    name: str = 'with_humans' if 'Human' in PARTICIPANTS else 'without_humans'
     digraph: List[str] = [f'digraph {name}' + ' {']
     for source, consumers in FOOD_WEB.items():
         for consumer, fraction in consumers.items():
@@ -90,6 +90,21 @@ def _create_dotfile(include_humans: bool):
     png_file: str = os.path.join(BASE_DIR, f'{name}.png')
     os.system(f'dot -Tpng {dot_file} -o {png_file}')
     os.remove(dot_file)
+    return
+
+
+def _write_latex(diet_matrix: np.array):
+    lines: List[str] = ['\\begin{bmatrix}']
+    for row in diet_matrix:
+        lines.append('    ' + ' & '.join([f'{v:.2f}' for v in row]) + ' \\\\')
+    else:
+        lines[-1] = lines[-1][:-3]
+        lines.append('\\end{bmatrix}')
+
+    matrix: str = '\n'.join(lines)
+    name: str = 'with_humans' if 'Human' in PARTICIPANTS else 'without_humans'
+    with open(os.path.join(BASE_DIR, f'{name}.txt'), 'w') as fp:
+        fp.write(matrix)
     return
 
 
@@ -124,9 +139,7 @@ def solve_food_web(
                 diet_matrix[i, j] = -fraction
 
     if draw_web:
-        # draw food web using graphviz
-        _create_dotfile(include_humans)
-        pass
+        _create_dotfile()
 
     for col in range(diet_matrix.shape[0] - 1):
         assert sum(diet_matrix[:, col]) == -1, f'consumption fractions did not sum to -1'
@@ -138,9 +151,8 @@ def solve_food_web(
     constants[0] = input_flux
     solution = solve(diet_matrix, constants)
 
-    if latex is not None:
-        # TODO: print equation as lAtEx
-        pass
+    if latex:
+        _write_latex(diet_matrix)
     return solution
 
 
