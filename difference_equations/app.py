@@ -1,14 +1,17 @@
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
 import streamlit as st
 from matplotlib import pyplot as plt
 
 
-def draw_phase_plot(populations: List[np.array]):
+def draw_phase_plot(
+        populations: List[np.array],
+        isoclines: Tuple[np.array, np.array, np.array],
+):
     plt.clf()
     plt.close('all')
-    fig = plt.figure(figsize=(8, 8), dpi=128)
+    fig = plt.figure(figsize=(8, 5), dpi=128)
     fig.add_subplot(111)
 
     for run in populations:
@@ -16,9 +19,13 @@ def draw_phase_plot(populations: List[np.array]):
         plt.quiver(x[:-1], y[:-1], x[1:] - x[:-1], y[1:] - y[:-1],
                    scale_units='xy', angles='xy', scale=1, width=0.0025)
 
+    plt.plot(isoclines[0], isoclines[1], label='prey-cline', color='blue', lw=0.75)
+    plt.plot(isoclines[0], isoclines[2], label='predator-cline', color='red', lw=0.75)
+
     plt.xlabel('Prey Population')
     plt.ylabel('Predator Population')
-    plt.title('Predator-Prey Population Phase Plot')
+    plt.title('Predator-Prey Population Phase Plot with Isoclines')
+    plt.legend()
     st.pyplot(fig)
     return
 
@@ -26,15 +33,15 @@ def draw_phase_plot(populations: List[np.array]):
 def main():
     st.title('Predator-Prey Difference Equations')
 
-    prey_capacity = st.slider('Prey Capacity', 50, 200, 75, 5)
+    prey_capacity = st.slider('Prey Capacity', 50, 200, 100, 5)
     col1, col2 = st.beta_columns(2)
     with col1:
-        reproduction_rate = st.slider('Prey Reproduction Rate', 0., 1., 1., 0.05, '%.2f')
-        efficiency = st.slider('Ecological Efficiency', 0.05, 0.5, 0.25, 0.05, '%.2f')
+        reproduction_rate = st.slider('Prey Reproduction Rate', 0., 1., 0.75, 0.05, '%.2f')
+        efficiency = st.slider('Ecological Efficiency', 0.05, 0.4, 0.2, 0.01, '%.2f')
         time_steps = st.slider('Time Steps', 10, 250, 100, 10)
     with col2:
-        predation_rate = st.slider('Predation Rate', 0.05, 0.4, 0.2, 0.05, '%.2f')
-        death_rate = st.slider('Predator Death Rate', 0.05, 0.4, 0.1, 0.05, '%.2f')
+        consumption_rate = st.slider('Consumption Rate', 0.01, 0.2, 0.1, 0.01, '%.2f')
+        death_rate = st.slider('Predator Death Rate', 0.01, 0.2, 0.05, 0.01, '%.2f')
         delta_t = st.slider('Step Size', 0.1, 1., 0.25, 0.05, '%.2f')
     grid_size = st.slider('Starting Grid', 0, 20, 0, 2)
     grid_size = grid_size // 2
@@ -43,11 +50,11 @@ def main():
     min_prey, min_predators = 3, 1
 
     def prey_delta(pop_prey, pop_predators):
-        delta_pop = pop_prey * (reproduction_rate * (1 - pop_prey / prey_capacity) - predation_rate * pop_predators)
+        delta_pop = pop_prey * (reproduction_rate * (1 - pop_prey / prey_capacity) - consumption_rate * pop_predators)
         return max(min(delta_pop * delta_t, prey_capacity - pop_prey), min_prey - pop_prey)
 
     def predators_delta(pop_prey, pop_predators):
-        delta_pop = pop_predators * (predation_rate * efficiency * pop_prey - death_rate * pop_predators)
+        delta_pop = pop_predators * (consumption_rate * efficiency * pop_prey - death_rate * pop_predators)
         return max(delta_pop * delta_t, min_predators - pop_predators)
 
     def run_simulation(run: np.array):
@@ -76,7 +83,13 @@ def main():
                 new_run = run_simulation(new_run)
                 populations.append(new_run)
 
-    draw_phase_plot(populations)
+    # calculate isoclines
+    xs = np.linspace(start=min(first_run[0]), stop=max(first_run[0]), num=100)
+    pogy_cline = reproduction_rate * (1 - xs / prey_capacity) / consumption_rate
+    striper_cline = (efficiency * consumption_rate / death_rate) * xs
+    isoclines = (xs, pogy_cline, striper_cline)
+
+    draw_phase_plot(populations, isoclines)
     return
 
 

@@ -34,18 +34,14 @@ def main():
     time = [t / 4 for t in range(100 * delta_t + 1)]
     populations = np.asarray(solve(initial, time))
 
-    pop_pogies = populations.T[0]
-    pop_stripers = populations.T[1]
-
     fig = plt.figure(figsize=(8, 5), dpi=200)
     fig.add_subplot(111)
 
-    plt.plot(time, pop_pogies, label='pogies', color='blue', lw=0.75)
-    plt.plot(time, pop_stripers, label='stripers', color='red', lw=0.75)
+    plt.plot(time, populations, lw=0.75)
 
     plt.xlabel('Time (s)')
     plt.ylabel('Populations')
-    plt.legend()
+    plt.legend(['pogies', 'stripers'])
     plt.title('Population vs Time of stripers and pogies from odeint')
     plt.savefig('odeint_solution.png', bbox_inches='tight', pad_inches=0.25)
     plt.close(fig)
