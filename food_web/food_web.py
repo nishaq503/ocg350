@@ -1,9 +1,11 @@
 import os
-from typing import List, Dict, Optional
+from typing import List, Dict
 
-from matplotlib import pyplot as plt
 import numpy as np
+from matplotlib import pyplot as plt
 from scipy.linalg import solve
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 PARTICIPANTS: List[str] = [
     'Sun',
@@ -72,12 +74,31 @@ def check_web():
     return
 
 
+def _create_dotfile(include_humans: bool):
+    name: str = 'with_humans' if include_humans else 'without_humans'
+    digraph: List[str] = [f'digraph {name}' + ' {']
+    for source, consumers in FOOD_WEB.items():
+        for consumer, fraction in consumers.items():
+            digraph.append(f'{source} -> {consumer} [label={fraction:.2f}];')
+    digraph.append('}')
+    dot_string: str = '\n'.join(digraph)
+
+    dot_file: str = os.path.join(BASE_DIR, f'{name}.dot')
+    with open(dot_file, 'w') as fp:
+        fp.write(dot_string)
+
+    png_file: str = os.path.join(BASE_DIR, f'{name}.png')
+    os.system(f'dot -Tpng {dot_file} -o {png_file}')
+    os.remove(dot_file)
+    return
+
+
 def solve_food_web(
-        input_flux: float,
         *,
-        include_humans: bool = True,
-        latex: Optional[str] = None,
-        draw: Optional[str] = None,
+        input_flux: float,
+        include_humans: bool,
+        latex: bool = True,
+        draw_web: bool = True,
 ) -> np.array:
     if include_humans:
         PARTICIPANTS.append('Human')
@@ -102,8 +123,9 @@ def solve_food_web(
                 i = enumeration[consumer]
                 diet_matrix[i, j] = -fraction
 
-    if draw:
+    if draw_web:
         # draw food web using graphviz
+        _create_dotfile(include_humans)
         pass
 
     for col in range(diet_matrix.shape[0] - 1):
@@ -137,7 +159,7 @@ def plot_bar_chart(with_humans: np.array, without_humans: np.array, title: str, 
     ax.set_xticklabels(PARTICIPANTS[1:], rotation=45)
 
     plt.xlabel('Participants', fontsize=16)
-    plt.ylabel('Fraction', fontsize=16)
+    plt.ylabel('Consumption (gC m^-2 yr^-1)', fontsize=16)
 
     plt.title(title, fontsize=24)
     plt.savefig(filename, bbox_inches='tight', pad_inches=0.25)
@@ -146,7 +168,7 @@ def plot_bar_chart(with_humans: np.array, without_humans: np.array, title: str, 
 
 
 if __name__ == '__main__':
-    _filename = os.path.abspath(os.path.join(os.path.dirname(__file__), 'bar_plots.png'))
-    _without_humans = solve_food_web(1_160, include_humans=False)
-    _with_humans = solve_food_web(1_160, include_humans=True)
+    _filename = os.path.join(BASE_DIR, 'bar_plots.png')
+    _without_humans = solve_food_web(input_flux=690, include_humans=False)
+    _with_humans = solve_food_web(input_flux=690, include_humans=True)
     plot_bar_chart(_with_humans, _without_humans, 'Food Web with (red) and without (blue) Humans', _filename)
