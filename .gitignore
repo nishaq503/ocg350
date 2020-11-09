@@ -25,4 +25,5 @@ plots*
 *.fls
 *.log
 *.gz
+old*
 
