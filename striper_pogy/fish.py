@@ -12,7 +12,7 @@ class Fish(ABC):
 
     This class defines properties that are common to all fish.
     """
-    def __init__(self, fish_size: Size, board_size: Size = BOARD_SIZE):
+    def __init__(self, board_size: Size, fish_size: Size):
         """ Creates a fish and drops it on the board. """
         if any((f <= 0 for f in fish_size)):
             raise ValueError(f'The width and height of the fish must be positive numbers. Got {fish_size} instead.')
@@ -73,9 +73,9 @@ class Prey(Fish):
 
     This class defines properties and methods that are specific to prey.
     """
-    def __init__(self, fish_size: Size = PREY_SIZE, board_size: Size = BOARD_SIZE):
+    def __init__(self, board_size: Size, fish_size: Size = PREY_SIZE):
         """ Creates a Prey fish, drops it on the board, and defines its color. """
-        super().__init__(fish_size, board_size)
+        super().__init__(board_size, fish_size)
         self.fill = (0, 0, 255)  # blue
         self.got_eaten = False
 
@@ -100,9 +100,9 @@ class Predator(Fish):
 
     This class defines properties and methods that are specific to predators.
     """
-    def __init__(self, fish_size: Size = PREDATOR_SIZE, board_size: Size = BOARD_SIZE):
+    def __init__(self, board_size: Size, fish_size: Size = PREDATOR_SIZE):
         """ Creates a Predator fish, drops it on the board, amd defines its color. """
-        super().__init__(fish_size, board_size)
+        super().__init__(board_size, fish_size)
         self.fill = (255, 0, 0)  # red
         self.num_eaten: int = 0
 
@@ -140,7 +140,7 @@ class Predator(Fish):
         :param food_requirement: the food requirement threshold for reproduction.
         :return: the modified predator with the number of children its going to have.
         """
-        if food_requirement <+ 0:
+        if food_requirement < 0:
             raise ValueError(f'Predator food requirements must be positive. Got {food_requirement:.3f} instead.')
         self.children = int(np.floor(self.num_eaten / food_requirement))
         return self

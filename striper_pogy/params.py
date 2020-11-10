@@ -1,16 +1,10 @@
 from utils import Size
 
-# change this to change the area of the board and proportionally change the carrying capacity of prey
-SIZE_MULTIPLIER = 1
-
 # dimensions of the board
-BOARD_SIZE: Size = Size(17 * SIZE_MULTIPLIER, 11 * SIZE_MULTIPLIER)
-
-# size of canvas to use for drawing the animation. DO NOT CHANGE this without understanding the cascading effects.
-CANVAS_SCALE = (2 ** 12) // max(BOARD_SIZE)
+BOARD_SIZE: Size = Size(17, 11)
 
 PREY_SIZE: Size = Size(1, 1)
-PREY_CAPACITY: int = int(100 * (SIZE_MULTIPLIER ** 2))
+PREY_CAPACITY: int = 75
 PREY_REPRODUCTION_RATE: float = 0.5
 STARTING_PREY = 3
 
@@ -25,7 +19,7 @@ PREDATOR_FOOD_REQUIREMENTS = 3
 FISHERY = None
 
 # Number of times to run the simulation
-NUM_SIMULATIONS = 1
+NUM_SIMULATIONS = 10
 
 # number of time steps for which to run each simulation
 TIME_STEPS = 100

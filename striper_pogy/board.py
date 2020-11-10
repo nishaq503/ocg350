@@ -11,18 +11,18 @@ from utils import Size
 class Board:
     def __init__(
             self,
-            *,  # all arguments after a * must be passed by name.
-            size: Size = BOARD_SIZE,
+            size: Size,
+            prey_capacity: int,
+            *,  # any arguments after '*' must be passed by name.
             starting_prey: int = STARTING_PREY,
-            prey_capacity: int = PREY_CAPACITY,
             starting_predators: int = STARTING_PREDATORS,
             fishery: Optional[float] = FISHERY
     ):
         """ Initializes a board with a given size.
 
         :param size: The (width, height) of board to use.
-        :param starting_prey: number of prey with which to start a simulation.
         :param prey_capacity: carrying capacity of the prey.
+        :param starting_prey: number of prey with which to start a simulation.
         :param starting_predators: number of predators with which to start a simulation.
         :param fishery: fraction of prey to remove each time step dur to fishing.
         """
@@ -114,7 +114,8 @@ class Board:
 
         return self._count_survivors()
 
-    def draw(self, scale: float = CANVAS_SCALE) -> Image:
+    def draw(self) -> Image:
+        scale: float = (2 ** 12) // max(self.size)
         image_size = self.width * scale, self.height * scale
         im: Image = Image.new(mode='RGB', size=image_size, color='white')
         draw: ImageDraw = ImageDraw.Draw(im=im)

@@ -1,3 +1,4 @@
+import shutil
 from typing import Optional
 
 from PIL import Image
@@ -65,22 +66,26 @@ def draw_difference_plots(populations: np.array, prey_plot_path: str, predator_p
     return
 
 
-def simulate_once(time_steps: int, gif_path: Optional[str] = None) -> np.array:
+def simulate_once(size_multiplier: int, time_steps: int, gif_path: Optional[str] = None) -> np.array:
     """
     Runs a single simulation of the model.
 
+    :param size_multiplier: size multiplier of board anc capacity.
     :param time_steps: Number of time steps for which to run the model.
     :param gif_path: file path where the animation may be saved.
     """
     if time_steps < 1:
         raise ValueError(f'must simulate for at least one time step. Got {time_steps}')
 
-    bay = Board()
+    bay = Board(
+        size=Size(BOARD_SIZE.width * size_multiplier, BOARD_SIZE.height * size_multiplier),
+        prey_capacity=PREY_CAPACITY * (size_multiplier ** 2),
+    )
     populations: np.array = np.zeros(shape=(2, time_steps))
     images: List[Image] = list()
 
     for i in range(time_steps):
-        end = ',\n' if (i + 1) % 50 == 0 else ', '
+        end = ',\n' if (i + 1) % 20 == 0 else ', '
         print(f'{i + 1}', end=end)
         populations[:, i] = bay.step()
         if gif_path is not None:
@@ -95,51 +100,42 @@ def simulate_once(time_steps: int, gif_path: Optional[str] = None) -> np.array:
             save_all=True,  # save all images in gif.
             optimize=True,  # reduces final filesize of the gif.
             append_images=images[1:],  # ordered list of other images.
-            duration=1_500,  # each frame is shown for this many milliseconds.
+            duration=1_000 if size_multiplier > 1 else 1_500,  # each frame is shown for this many milliseconds.
         )
     return populations
 
 
 def main(
-        plots_path: str = SIMULATIONS_PATH,
+        size_multiplier: int,
         erase: bool = ERASE,
         animate: bool = ANIMATE,
         num_simulations: int = NUM_SIMULATIONS,
         time_steps: int = TIME_STEPS,
 ):
-    # Create required directories and remove old files if necessary
-    os.makedirs(plots_path, exist_ok=True)
+    if (not isinstance(size_multiplier, int)) or (size_multiplier < 1):
+        raise ValueError(f'The Size Multiplier must be an integer, and be at least 1.')
+
+    # Remove old files if necessary
+    plots_dir = os.path.join(SIMULATIONS_PATH, f'multiplier_{size_multiplier}')
     if erase:
-        for root, _, files in os.walk(plots_path):
-            [os.remove(os.path.join(root, file)) for file in files]
-
-    gif_dir = os.path.join(plots_path, 'simulation')
-    population_dir = os.path.join(plots_path, 'populations-vs-time')
-    phase_dir = os.path.join(plots_path, 'phase-plots')
-    prey_difference_dir = os.path.join(plots_path, 'prey-difference')
-    predator_difference_dir = os.path.join(plots_path, 'predator-difference')
-
-    [os.makedirs(_dir, exist_ok=True) for _dir in [
-        gif_dir,
-        population_dir,
-        phase_dir,
-        prey_difference_dir,
-        predator_difference_dir
-    ]]
+        shutil.rmtree(plots_dir)
+    plots_dir = os.path.join(SIMULATIONS_PATH, f'multiplier_{size_multiplier}', f'sim__0__')
 
     # create file names for the first of each plot
-    gif_path = os.path.join(gif_dir, 'animation::0.gif')
-    population_path = os.path.join(population_dir, 'plot::0.png')
-    phase_path = os.path.join(phase_dir, 'plot::0.png')
-    prey_difference_path = os.path.join(prey_difference_dir, 'plot::0.png')
-    predator_difference_path = os.path.join(predator_difference_dir, 'plot::0.png')
+    population_path = os.path.join(plots_dir, '1-populations-vs-time.png')
+    phase_path = os.path.join(plots_dir, '2-phase-plot.png')
+    prey_difference_path = os.path.join(plots_dir, '3-prey-difference.png')
+    predator_difference_path = os.path.join(plots_dir, '4-predator-difference.png')
+    gif_path = os.path.join(plots_dir, '5-animation.gif')
 
     # run simulation for the requested number of times.
     np.random.seed(0)
     for i in range(num_simulations):
-        print(f'Starting  simulation number {i + 1}.')
-        gif_path = gif_path if animate else None
-        populations = simulate_once(time_steps=time_steps, gif_path=gif_path)
+        print(f'Starting simulation number {i + 1}, with size multiplier {size_multiplier}.')
+        if (i == 0) and animate:
+            populations = simulate_once(size_multiplier=size_multiplier, time_steps=time_steps, gif_path=gif_path)
+        else:
+            populations = simulate_once(size_multiplier=size_multiplier, time_steps=time_steps, gif_path=None)
         draw_population_plot(populations, population_path)
         draw_phase_plot(populations, phase_path)
         draw_difference_plots(populations, prey_difference_path, predator_difference_path)
@@ -147,4 +143,5 @@ def main(
 
 
 if __name__ == '__main__':
-    main()
+    main(size_multiplier=1)
+    # main(size_multiplier=5)

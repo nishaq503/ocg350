@@ -15,13 +15,17 @@ SIMULATIONS_PATH = os.path.join(PLOTS_PATH, 'simulations')
 def increment_filename(filepath: str):
     """ Increments the filepath by 1 until the new filepath does not exist.
 
-    The expected format is '{filename}::{number}.{extension}'.
+    The expected format is '{directory}__{number}__{filename}.{extension}'.
     """
     while os.path.exists(filepath):
         parts = filepath.split('.')
         prefix, extension = '.'.join(parts[:-1]), parts[-1]
-        parts = prefix.split('::')
-        filepath = f'{parts[0]}::{int(parts[1]) + 1}.{extension}'
+        parts = prefix.split('__')
+        filepath = f'{parts[0]}__{int(parts[1]) + 1}__{parts[2]}.{extension}'
+
+    path_parts = filepath.split('/')
+    plotdir = '/'.join(path_parts[:-1])
+    os.makedirs(plotdir, exist_ok=True)
     return filepath
 
 
@@ -31,9 +35,7 @@ def limits(min_x: int, max_x: int) -> Tuple[int, int]:
     return (min_x // factor - 1) * factor, min_x + factor * (1 + (max_x - min_x) // factor)
 
 
-def _add_labels(ax, x, y, x_label, y_label, title, plotpath):
-    # ax.set_xlim(limits(np.min(x), np.max(x)))
-    # ax.set_ylim(limits(np.min(y), np.max(y)))
+def _add_labels(x_label, y_label, title, plotpath):
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
@@ -69,13 +71,12 @@ def line_plot(
         raise ValueError(f'must have a label for each curve. '
                          f'Got {len(ys)} curves but {len(labels)} labels.')
     if not all((len(y) == len(x) for y in ys)):
-        print(x.shape, ys.shape)
         raise ValueError(f'All curves must have the same number of points as x-values. In this cane, {len(x)}.')
 
     fig = plt.figure(figsize=(16, 10), dpi=200)
-    ax = fig.add_subplot(111)
+    fig.add_subplot(111)
     [plt.plot(x, ys[i], c=colors[i], label=labels[i], lw=1.) for i in range(len(colors))]
-    _add_labels(ax, x, ys, x_label, y_label, title, plotpath)
+    _add_labels(x_label, y_label, title, plotpath)
     plt.close(fig)
     return
 
@@ -103,9 +104,9 @@ def arrow_plot(
         raise ValueError(f'x and y must have the same shape. Got x {x.shape} and y {y.shape} instead.')
 
     fig = plt.figure(figsize=(16, 10), dpi=200)
-    ax = fig.add_subplot(111)
+    fig.add_subplot(111)
     plt.quiver(x[:-1], y[:-1], x[1:] - x[:-1], y[1:] - y[:-1],
                scale_units='xy', angles='xy', scale=1, width=0.003)
-    _add_labels(ax, x, y, x_label, y_label, title, plotpath)
+    _add_labels(x_label, y_label, title, plotpath)
     plt.close(fig)
     return
