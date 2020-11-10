@@ -1,6 +1,6 @@
 # TL;DR
 
-* You need Python3.8 (or later) along with ```numpy```, ```pillow```, and ```matplotlib```.
+* You need Python3.8 (or later) along with ```numpy```, ```matplotlib```, and ```pillow```.
 * You can tweak the default parameters in ```params.py```.
 * After that, run ```python3.8 simulate.py``` from the terminal or your IDE.
 * Results will be shown as plots in the "simulations" directory.
@@ -9,7 +9,7 @@
 
 This is my implementation of a predator-prey model tailored to simulate the striper-pogy game we played near the start of the semester.
 
-The ```params.py``` file contains most of the parameters that can be tweaked.
+The ```params.py``` file contains the parameters that can be tweaked.
 Take your time changing values as you wish and see how the plots change.
 
 The ```utils.py``` file contains some helper code that I use in the other files.
@@ -19,13 +19,13 @@ Note the custom types I defined to capture the concepts of:
 * "Location" of the fish on the board, and
 * "Populations" of the species during the simulation.
 
-The ```fish.py``` file contains abstract representations of the two species of fish.
+The ```fish.py``` file contains classes representing the two species of fish.
 
 * The ```Fish``` class captures properties that are common to all fish.
 * The ```Prey``` class inherits from the ```Fish``` class and specializes for pogies.
-* The ```Predator``` class also inherits from the ```Fish``` class and represents stripers.
+* The ```Predator``` class also inherits from the ```Fish``` class and specializes for stripers.
 
-The ```board.py``` file contains a class represnting the game board we used earlier, and the Narragansett Bay in the simulation.
+The ```board.py``` file contains a class representing the game board we used earlier, and the Narragansett Bay in the simulation.
 In the ```Board``` class, the ```step``` method handles the logic of a single time-step during the simulation.
 
 * Drop all fish on the board.
@@ -43,5 +43,4 @@ This frame shows everything that happened in that time-step.
 
 The ```simulate.py``` file contains code that actually uses ```Board```, ```Prey``` and ```Predator``` to run the simulation.
 
-I have thoroughly documented the code.
-For further details, I refer you to that documentation.
+For more details, please read the documentation in the code.

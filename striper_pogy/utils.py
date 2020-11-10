@@ -5,8 +5,8 @@ from typing import Tuple, List
 import numpy as np
 from matplotlib import pyplot as plt
 
-Size = namedtuple('Size', 'width height')
-Location = namedtuple('Location', 'x y')
+Size = namedtuple('Size', 'width height')  # for the sizes of the board and the fish.
+Location = namedtuple('Location', 'x y')  # for the locations of the fish on the board.
 
 PLOTS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'plots'))
 SIMULATIONS_PATH = os.path.join(PLOTS_PATH, 'simulations')
