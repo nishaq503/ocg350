@@ -10,7 +10,6 @@ def draw_phase_plot(
         isoclines: Tuple[np.array, np.array, np.array],
 ):
     plt.clf()
-    plt.close('all')
     fig = plt.figure(figsize=(8, 5), dpi=128)
     fig.add_subplot(111)
 
@@ -30,17 +29,32 @@ def draw_phase_plot(
     return
 
 
+def get_isoclines(
+        limits: Tuple[float, float],
+        reproduction_rate: float,
+        prey_capacity: float,
+        consumption_rate: float,
+        efficiency: float,
+        death_rate: float,
+) -> Tuple[np.array, np.array, np.array]:
+    # calculate isoclines
+    xs = np.linspace(start=limits[0], stop=limits[1], num=100)
+    pogy_cline = reproduction_rate * (1 - xs / prey_capacity) / consumption_rate
+    striper_cline = (efficiency * consumption_rate / death_rate) * xs
+    return xs, pogy_cline, striper_cline
+
+
 def main():
     st.title('Predator-Prey Difference Equations')
 
     prey_capacity = st.slider('Prey Capacity', 50, 200, 100, 5)
     col1, col2 = st.beta_columns(2)
     with col1:
-        reproduction_rate = st.slider('Prey Reproduction Rate', 0., 1., 0.75, 0.05, '%.2f')
-        efficiency = st.slider('Ecological Efficiency', 0.05, 0.4, 0.2, 0.01, '%.2f')
+        reproduction_rate = st.slider('Prey Reproduction Rate', 0., 1., 0.5, 0.05, '%.2f')
+        efficiency = st.slider('Ecological Efficiency', 0.05, 0.4, 0.15, 0.01, '%.2f')
         time_steps = st.slider('Time Steps', 10, 250, 100, 10)
     with col2:
-        consumption_rate = st.slider('Consumption Rate', 0.01, 0.2, 0.1, 0.01, '%.2f')
+        consumption_rate = st.slider('Consumption Rate', 0.01, 0.2, 0.05, 0.01, '%.2f')
         death_rate = st.slider('Predator Death Rate', 0.01, 0.2, 0.05, 0.01, '%.2f')
         delta_t = st.slider('Step Size', 0.1, 1., 0.25, 0.05, '%.2f')
     grid_size = st.slider('Starting Grid', 0, 20, 0, 2)
@@ -83,11 +97,9 @@ def main():
                 new_run = run_simulation(new_run)
                 populations.append(new_run)
 
-    # calculate isoclines
-    xs = np.linspace(start=min(first_run[0]), stop=max(first_run[0]), num=100)
-    pogy_cline = reproduction_rate * (1 - xs / prey_capacity) / consumption_rate
-    striper_cline = (efficiency * consumption_rate / death_rate) * xs
-    isoclines = (xs, pogy_cline, striper_cline)
+    constants = [reproduction_rate, prey_capacity, consumption_rate, efficiency, death_rate]
+    isoclines = get_isoclines((min(first_run[0]), max(first_run[0])), *constants)
+    st.write(f'The Equilibrium populations are: prey: {first_run[0][-1]:.1f}, predators: {first_run[1][-1]:.1f}')
 
     draw_phase_plot(populations, isoclines)
     return
