@@ -1,0 +1,117 @@
+\section{Differential Equation Version}
+\label{sec:defferential-equation-version}
+
+We work with the following coupled difference equations:
+
+\begin{equation}
+    \label{equation:differential:m}
+    \frac{\delta M}{\delta t} = M_t + r M_t \bigg[ 1 - \frac{M_t}{K} \bigg] - c \cdot M_t S_t
+\end{equation}
+
+\begin{equation}
+    \label{equation:differential:s}
+    \frac{\delta S}{\delta t} = S_t + \epsilon \cdot c \cdot M_t S_t - d \cdot S_t^{2}
+\end{equation}
+
+The parameters in Equations~\ref{equation:differential:m} and~\ref{equation:differential:s} are:
+
+\begin{itemize}
+    \item $\frac{\delta M}{\delta t}$ is the \textit{change} population of menhaden per unit time,
+    \item $\frac{\delta S}{\delta t}$ is the \textit{change} population of stripers per unit time, and
+    \item the rest of the parameters are the same as before.
+\end{itemize}
+
+
+\subsection*{a.}
+
+\begin{table}[h!]
+    \begin{center}
+        \begin{tabular}{c|c|c}
+            \textbf{Parameter} & \textbf{Unit} & \textbf{Value} \\
+            \hline
+            $r$ & -- & 0.50 \\
+            $K$ & $M$ & 100 \\
+            $c$ & $S^{-1}$ & 0.05 \\
+            $\epsilon$ & $S \cdot M^{-1}$ & 0.15 \\
+            $d$ & $S^{-1}$ & 0.05 \\
+        \end{tabular}
+        \caption{Differential Equations Parameter Values}
+        \label{table:differential-parameters}
+    \end{center}
+\end{table}
+
+
+\subsection*{b.}
+
+At the equilibrium, the populations no longer change.
+Therefore, to solve for the isoclines, we set:
+\begin{itemize}
+    \item $\frac{\delta M}{\delta t} = 0$ and $M^{\star} = M_t$, and
+    \item $\frac{\delta S}{\delta t} = 0$ and $S^{\star} = S_t$.
+\end{itemize}
+
+The equations for the isoclines turned out to be the same as in Equations~\ref{equation:difference:m-isocline} and~\ref{equation:difference:s-isocline}.
+
+
+\subsection*{c.}
+
+The joint equilibrium is $M^{\star} = 40$, and $S^{\star} = 6$.
+
+
+\subsection*{d.}
+
+The chosen values for all parameters are shown in Table~\ref{table:differential-parameters}.
+
+
+\subsection*{e.}
+
+The time-series plot of the populations of the fish is shown in Figure~\ref{figure:differential-time-series-single}.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=6in]{images/differential-time-series-single.png}
+    \caption{Time Series of Populations}
+    \label{figure:differential-time-series-single}
+\end{figure}
+
+
+\subsection*{f.}
+
+Figure~\ref{figure:differential-single} shows how the populations change when starting with $3$ pogies and $1$ striper.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=6in]{images/differential-plot-single.png}
+    \caption{Differential Equations and corresponding Isoclines.}
+    \label{figure:differential-single}
+\end{figure}
+
+Figure~\ref{figure:differential-multiple} shows how the populations change when starting with several different initial populations of pogies and stripers.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=6in]{images/differential-plot-multiple.png}
+    \caption{Differential Equations and corresponding Isoclines.}
+    \label{figure:differential-multiple}
+\end{figure}
+
+Figures~\ref{figure:differential-single} and~\ref{figure:differential-multiple} both show that the populations converge on the equilibrium we calculated earlier.
+
+
+\subsection*{g.}
+
+Halving the reproduction rate of menhaden to $0.25$ should decrease the equilibrium populations of both fish.
+The curves converge on $(25, 3.8)$, as expected.
+This is very slightly different from our difference-equations model.
+
+Doubling the consumption rate to $0.10$ should vastly decrease the population of menhaden, and somewhat decrease the population of stripers.
+The curves converge on $(14.3, 4.3)$.
+This is identical to our difference-equations model.
+
+Doubling the ecological efficiency to $0.30$ should increase the population of stripers which would cause a decrease in the population of pogies.
+We see this happen with the populations converging to $(25, 7.5)$.
+This is also identical to our difference-equations model.
+
+Doubling the death rate of strieprs to $0.10$ should decrease the population of stripers and increase the population of pogies.
+We see this happen with the populations converging to $(57.1, 4.3)$.
+This is also identical to our difference-equations model.

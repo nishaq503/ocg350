@@ -1,0 +1,133 @@
+\section{Difference Equation Version}
+\label{sec:difference-equation-version}
+
+We work with the following coupled difference equations:
+
+\begin{equation}
+    \label{equation:difference:m}
+    M_{t + 1} = M_t + r M_t \bigg[ 1 - \frac{M_t}{K} \bigg] - c \cdot M_t S_t
+\end{equation}
+
+\begin{equation}
+    \label{equation:difference:s}
+    S_{t + 1} = S_t + \epsilon \cdot c \cdot M_t S_t - d \cdot S_t^{2}
+\end{equation}
+
+The parameters in Equations~\ref{equation:difference:m} and~\ref{equation:difference:s} are:
+
+\begin{itemize}
+    \item $M$ is the population of \textit{menhaden},
+    \item $S$ is the population of \textit{stripers},
+    \item $t$ is \textit{time},
+    \item $r$ is the \textit{reproduction rate} of menhaden,
+    \item $K$ is the \textit{carrying capacity} of menhaden,
+    \item $c$ is the \text{consumption rate} of menhaden by stripers,
+    \item $\epsilon$ is the \textit{efficiency} of consumption by stripers, and
+    \item $d$ is the \textit{death rate} of stripers.
+\end{itemize}
+
+
+\subsection*{a.}
+
+\begin{table}[h!]
+    \begin{center}
+        \begin{tabular}{c|c|c}
+            \textbf{Parameter} & \textbf{Unit} & \textbf{Value} \\
+            \hline
+            $r$ & -- & 0.50 \\
+            $K$ & $M$ & 100 \\
+            $c$ & $S^{-1}$ & 0.05 \\
+            $\epsilon$ & $S \cdot M^{-1}$ & 0.15 \\
+            $d$ & $S^{-1}$ & 0.05 \\
+        \end{tabular}
+        \caption{Difference Equations Parameter Values}
+        \label{table:difference-parameters}
+    \end{center}
+\end{table}
+
+
+\newpage
+\subsection*{b.}
+
+When in equilibrium, the populations no longer change.
+Therefore, to solve for the isoclines, we set:
+\begin{itemize}
+    \item $M_{t + 1} = M_t = M^{\star}$, and
+    \item $S_{t + 1} = S_t = S^{\star}$.
+\end{itemize}
+
+The equations for the isoclines are:
+
+\begin{equation}
+    \label{equation:difference:m-isocline}
+    S^{\star} = \frac{r}{s} \bigg( 1 - \frac{M^{\star}}{K} \bigg)
+\end{equation}
+
+\begin{equation}
+    \label{equation:difference:s-isocline}
+    S^{\star} = \frac{\epsilon \cdot c}{d} M^{\star}
+\end{equation}
+
+
+\subsection*{c.}
+
+The joint equilibrium is $M^{\star} = 40$, and $S^{\star} = 6$.
+
+
+\subsection*{d.}
+
+The chosen values for all parameters are shown in Table~\ref{table:difference-parameters}.
+
+
+\subsection*{e. and f.}
+
+Figure~\ref{figure:difference-single} shows how the populations change when starting with $3$ pogies and $1$ striper.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=6in]{images/difference-plot-single.png}
+    \caption{Difference Equations and corresponding Isoclines.}
+    \label{figure:difference-single}
+\end{figure}
+
+Figure~\ref{figure:difference-multiple} shows how the populations change when starting with several different initial populations of pogies and stripers.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=6in]{images/difference-plot-multiple.png}
+    \caption{Difference Equations and corresponding Isoclines.}
+    \label{figure:difference-multiple}
+\end{figure}
+
+Figures~\ref{figure:difference-single} and~\ref{figure:difference-multiple} both show that the populations converge on the equilibrium we calculated earlier.
+
+
+\subsection*{g.}
+
+Halving the reproduction rate of menhaden to $0.25$ should decrease the equilibrium populations of both fish.
+The curves converge on $(25.1, 3.7)$, as expected.
+
+Doubling the consumption rate to $0.10$ should vastly decrease the population of menhaden, and somewhat decrease the population of stripers.
+The curves converge on $(14.3, 4.3)$, as can be seen in Figure~\ref{figure:difference-double-c}.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=6in]{images/difference-double-c.png}
+    \caption{Doubling the Consumption Rate.}
+    \label{figure:difference-double-c}
+\end{figure}
+
+Doubling the ecological efficiency to $0.30$ should increase the population of stripers which would cause a decrease in the population of pogies.
+We see this happen with the populations converging to $(25, 7.5)$.
+
+Doubling the death rate of strieprs to $0.10$ should decrease the population of stripers and increase the population of pogies.
+We see this happen with the populations converging to $(57.1, 4.3)$ in Figure~\ref{figure:difference-double-d}.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=6in]{images/difference-double-d.png}
+    \caption{Doubling the Death Rate.}
+    \label{figure:difference-double-d}
+\end{figure}
+
+In general, a steeper isocline corresponds to larger changes in the corresponding population with each time step.
