@@ -15,8 +15,17 @@ def draw_phase_plot(
 
     for run in populations:
         x, y = run[0], run[1]
-        plt.quiver(x[:-1], y[:-1], x[1:] - x[:-1], y[1:] - y[:-1],
-                   scale_units='xy', angles='xy', scale=1, width=0.0025)
+        # flatten the image
+        plt.quiver(
+            x[:-1],  # x-coordinates of pixels
+            y[:-1],  # y-coordinates of pixels
+            x[1:] - x[:-1],  # flow-x
+            y[1:] - y[:-1],  # flow-y
+            scale_units='xy',
+            angles='xy',
+            scale=1,
+            width=0.0025,
+        )
 
     plt.plot(isoclines[0], isoclines[1], label='prey-cline', color='blue', lw=0.75)
     plt.plot(isoclines[0], isoclines[2], label='predator-cline', color='red', lw=0.75)
@@ -48,7 +57,7 @@ def main():
     st.title('Predator-Prey Difference Equations')
 
     prey_capacity = st.slider('Prey Capacity', 50, 200, 100, 5)
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     with col1:
         reproduction_rate = st.slider('Prey Reproduction Rate', 0., 1., 0.5, 0.05, '%.2f')
         efficiency = st.slider('Ecological Efficiency', 0.05, 0.4, 0.15, 0.01, '%.2f')

@@ -28,7 +28,7 @@ def main():
     st.title('Predator-Prey Differential Equations')
 
     prey_capacity = st.slider('Prey Capacity', 50, 200, 100, 5)
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     with col1:
         reproduction_rate = st.slider('Prey Reproduction Rate', 0., 1., 0.5, 0.05, '%.2f')
         efficiency = st.slider('Ecological Efficiency', 0.05, 0.4, 0.15, 0.01, '%.2f')

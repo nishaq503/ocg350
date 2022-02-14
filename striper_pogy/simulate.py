@@ -1,3 +1,4 @@
+import pathlib
 import shutil
 from typing import Optional
 
@@ -107,7 +108,7 @@ def simulate_once(size_multiplier: int, time_steps: int, gif_path: Optional[str]
 
 def main(
         size_multiplier: int,
-        erase: bool = ERASE,
+        erase: bool = False,
         animate: bool = ANIMATE,
         num_simulations: int = NUM_SIMULATIONS,
         time_steps: int = TIME_STEPS,
@@ -120,6 +121,7 @@ def main(
     if erase:
         shutil.rmtree(plots_dir)
     plots_dir = os.path.join(SIMULATIONS_PATH, f'multiplier_{size_multiplier}', f'sim__0__')
+    pathlib.Path(plots_dir).mkdir(exist_ok=True, parents=True)
 
     # create file names for the first of each plot
     population_path = os.path.join(plots_dir, '1-populations-vs-time.png')
